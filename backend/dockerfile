@@ -1,8 +1,16 @@
 FROM node:lts-alpine
+
+# Install native build dependencies
+RUN apk add --no-cache python3 make g++ 
+
 WORKDIR /usr/app
+
 COPY package*.json ./
+
 RUN npm install
-RUN npm update
+
 COPY . .
+
 EXPOSE 3000
+
 CMD ["node", "index.js"]
