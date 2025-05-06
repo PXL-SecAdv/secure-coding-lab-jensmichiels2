@@ -23,30 +23,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   _login() async {
-    
+  String url = "http://localhost:3000/authenticate";
 
-      String url = "http://localhost:3000/authenticate/${userNameController.text}/${passwordController.text}";
-      print(url);
-      var response = await http.get(Uri.parse(url));
+  var response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'username': userNameController.text,
+      'password': passwordController.text,
+    }),
+  );
 
-      if(response.statusCode == 200)
-      {
-        final List<dynamic> r = jsonDecode(response.body);
-        if(r.isNotEmpty)
-        {
-          Authentication.user = userNameController.text;
-          Navigator.of(context).pushNamed(LandingPage.route);
-        }
-        else
-        {
-          await _showDialog("Login failed", "Wrong username or password");
-        }
-      }
-      else
-      {
-        await _showDialog("Login failed", "Oops! Something went wrong. We can't log you in right now, please try again later");
-      }
+  if (response.statusCode == 200) {
+    final List<dynamic> r = jsonDecode(response.body);
+    if (r.isNotEmpty) {
+      Authentication.user = userNameController.text;
+      Navigator.of(context).pushNamed(LandingPage.route);
+    } else {
+      await _showDialog("Login failed", "Wrong username or password");
+    }
+  } else {
+    await _showDialog("Login failed", "Oops! Something went wrong. We can't log you in right now, please try again later");
   }
+}
+
 
   Future<void> _showDialog(String header, String content) async {
     return showDialog<void>(

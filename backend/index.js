@@ -32,9 +32,9 @@ app.use(
     })
 );
 
-app.get('/authenticate/:username/:password', async (request, response) => {
-    const username = request.params.username;
-    const password = request.params.password;
+app.post('/authenticate', async (request, response) => {
+    const { username, password } = request.body;
+
 
     try {
         const result = await pool.query(
